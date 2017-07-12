@@ -1,0 +1,31 @@
+{
+  "name": "update-forked-repo",
+  "version": "0.0.0",
+  "description": "Use Travis CI to automatically update forked repo",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NoahDragon/update-forked-repo.git"
+  },
+  "keywords": [
+    "Travis",
+    "CI",
+    "forked",
+    "repository"
+  ],
+  "author": "Abner",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/NoahDragon/update-forked-repo/issues"
+  },
+  "homepage": "https://github.com/NoahDragon/update-forked-repo#readme",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "github": "^9.2.0",
+    "lodash": "^4.17.4"
+  }
+}

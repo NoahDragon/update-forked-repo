@@ -1,0 +1,21 @@
+language: node_js
+
+sudo: false
+
+cache:
+  apt: true
+  directories:
+    - node_modules
+
+node_js:
+  - "node"
+
+before_script:
+  - git config --global user.email "hi@abnerchou.me"
+  - git config --global user.name "Abner Chou"
+
+script:
+  - npm start
+
+after_script:
+  - echo "Completed."
