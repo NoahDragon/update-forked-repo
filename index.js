@@ -1,10 +1,20 @@
-var githubApi = require("github");
-var _ = require("lodash");
+const githubApi = require("github");
+const _ = require("lodash");
+const yaml = require("js-yaml");
+const fs = require('fs');
+const path = require('path');
+const delDir = require('./lib/asyncRemoveDir').asyncDeleteFolder;
+
 var repoList = [];
+var baseDir = __dirname;
+var config = yaml.safeLoad(fs.readFileSync(path.join(baseDir, '.config.yml'), 'utf-8'));
+var envToken = process.env.GITHUB_TOKEN
+
+var isDebug = false;
 
 var github = new githubApi({
     // optional
-    debug: false,
+    debug: isDebug,
     protocol: "https",
     host: "api.github.com", // should be api.github.com for GitHub
     pathPrefix: "", // for some GHEs; none for GitHub
@@ -18,6 +28,7 @@ var github = new githubApi({
 
 function getRepos(err, res){
     if (err) {
+        console.log(err);
         return false;
     }
 
@@ -27,7 +38,37 @@ function getRepos(err, res){
         github.getNextPage(res, getRepos);
     } else {
         console.log(repoList.length);
+        repoList.forEach(function(element) {
+            github.repos.get({owner: config.org, repo:element.name}, (e,r) => {
+                if (e) {
+                    console.log(e);
+                }
+                console.log(r["data"].name);
+            });
+        }, this);
     }
 }
 
-github.repos.getForOrg({org: "google", per_page: 200}, getRepos);
+function git() {
+    var len = arguments.length;
+    var args = new Array(len);
+
+    for (var i = 0; i < len; i++) {
+        args[i] = arguments[i];
+    }
+
+    return spawn('git', args.slice(1), {
+        cwd: args[0],
+        verbose: isDebug
+    });
+}
+
+// Autenticate.
+if (config.auth.token || envToken) {
+    github.authenticate({
+        type: "token",
+        token: config.auth.token || envToken,
+    });
+}
+
+github.repos.getForOrg({org: config.org, per_page: 100, type: 'forks'}, getRepos);

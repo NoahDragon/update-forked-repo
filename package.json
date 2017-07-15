@@ -26,6 +26,7 @@
   "dependencies": {
     "bluebird": "^3.5.0",
     "github": "^9.2.0",
+    "js-yaml": "^3.9.0",
     "lodash": "^4.17.4"
   }
 }
