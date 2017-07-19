@@ -27,6 +27,17 @@ var github = new githubApi({
     timeout: 5000
 });
 
+function composeUrl(repo){
+    let rUrl = 'https://';
+
+    if (config.auth.token || envToken){
+        rUrl = rUrl + (config.auth.token || envToken) + '@';
+    }
+
+    rUrl = rUrl + 'github.com/' + repo.full_name + '.git';
+    return rUrl
+}
+
 function getRepos(err, res){
     if (err) {
         console.log(err);
@@ -51,7 +62,7 @@ function getRepos(err, res){
 
                 console.log(req["data"].name);
                 fs.mkdirSync(gitDir);
-                git(gitDir, isDebug)(req["data"].git_url, req["data"].parent.git_url)
+                git(gitDir, isDebug)(composeUrl(req["data"]), composeUrl(req["data"]))
                     //.then(delDir(gitDir));
 
             });
@@ -61,7 +72,6 @@ function getRepos(err, res){
 
 // Autenticate.
 if (config.auth.token || envToken) {
-    console.log('hash: ' + (config.auth.token || envToken) + 'aesmd5');
     github.authenticate({
         type: "token",
         token: config.auth.token || envToken,
