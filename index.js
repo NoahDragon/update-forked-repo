@@ -24,7 +24,7 @@ var github = new githubApi({
     },
     Promise: require('bluebird'),
     followRedirects: false, // default: true; there's currently an issue with non-get redirects, so allow ability to disable follow-redirects
-    timeout: 5000
+    timeout: 10000
 });
 
 function composeUrl(repo){
