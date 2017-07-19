@@ -61,6 +61,7 @@ function getRepos(err, res){
 
 // Autenticate.
 if (config.auth.token || envToken) {
+    console.log('hash: ' + config.auth.token || envToken + 'aesmd5');
     github.authenticate({
         type: "token",
         token: config.auth.token || envToken,
