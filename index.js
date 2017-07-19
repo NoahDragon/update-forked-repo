@@ -63,8 +63,8 @@ function getRepos(err, res){
                 console.log(req["data"].name);
                 fs.mkdirSync(gitDir);
                 git(gitDir, isDebug)(composeUrl(req["data"]), composeUrl(req["data"]))
-                    .then(() => console.log(gitDir + ' Done.'))
-                    .then(() => delDir(gitDir));
+                    .then(() => delDir(gitDir))
+                    .then(() => console.log(gitDir + ' Done.'));
             });
         }, this);
     }
