@@ -60,7 +60,7 @@ function getRepos(err, res){
                 
                 let gitDir = path.join(baseDir, i.toString());
 
-                console.log(req["data"].name);
+                console.log(req["data"].name, i.toString());
                 fs.mkdirSync(gitDir);
                 git(gitDir, isDebug)(composeUrl(req["data"]), composeUrl(req["data"].parent))
                     .then(() => delDir(gitDir))
