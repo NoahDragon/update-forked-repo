@@ -3,7 +3,8 @@ const _ = require("lodash");
 const yaml = require("js-yaml");
 const fs = require('fs');
 const path = require('path');
-const delDir = require('./lib/asyncRemoveDir').asyncDeleteFolder;
+const delDir = require('./lib/removeDir').deleteFolder;
+const git = require('./lib/git');
 
 var repoList = [];
 var baseDir = __dirname;
@@ -38,29 +39,24 @@ function getRepos(err, res){
         github.getNextPage(res, getRepos);
     } else {
         console.log(repoList.length);
-        repoList.forEach(function(element) {
-            github.repos.get({owner: config.org, repo:element.name}, (e,r) => {
-                if (e) {
-                    console.log(e);
+        repoList.slice(0, 5).forEach(function(e, i) {
+            github.repos.get({  owner: config.org, 
+                                repo: e.name}, 
+            (err, req) => {
+                if (err) {
+                    console.log(err);
                 }
-                console.log(r["data"].name);
+                
+                let gitDir = path.join(baseDir, i.toString());
+
+                console.log(req["data"].name);
+                fs.mkdirSync(gitDir);
+                git(gitDir, isDebug)(req["data"].html_url, req["data"].parent.html_url)
+                    //.then(delDir(gitDir));
+
             });
         }, this);
     }
-}
-
-function git() {
-    var len = arguments.length;
-    var args = new Array(len);
-
-    for (var i = 0; i < len; i++) {
-        args[i] = arguments[i];
-    }
-
-    return spawn('git', args.slice(1), {
-        cwd: args[0],
-        verbose: isDebug
-    });
 }
 
 // Autenticate.
