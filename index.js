@@ -49,7 +49,7 @@ function getRepos(err, res){
     if (github.hasNextPage(res)){
         github.getNextPage(res, getRepos);
     } else {
-        console.log(repoList.length);
+        console.log('Total repos: ' + repoList.length);
         repoList.forEach(function(e, i) {
             github.repos.get({  owner: config.org, 
                                 repo: e.name}, 
@@ -63,8 +63,8 @@ function getRepos(err, res){
                 console.log(req["data"].name);
                 fs.mkdirSync(gitDir);
                 git(gitDir, isDebug)(composeUrl(req["data"]), composeUrl(req["data"]))
-                    //.then(delDir(gitDir));
-
+                    .then(() => console.log(gitDir + ' Done.'))
+                    .then(() => delDir(gitDir));
             });
         }, this);
     }
