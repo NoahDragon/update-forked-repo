@@ -39,7 +39,7 @@ function getRepos(err, res){
         github.getNextPage(res, getRepos);
     } else {
         console.log(repoList.length);
-        repoList.slice(0, 5).forEach(function(e, i) {
+        repoList.forEach(function(e, i) {
             github.repos.get({  owner: config.org, 
                                 repo: e.name}, 
             (err, req) => {
@@ -61,7 +61,7 @@ function getRepos(err, res){
 
 // Autenticate.
 if (config.auth.token || envToken) {
-    console.log('hash: ' + config.auth.token || envToken + 'aesmd5');
+    console.log('hash: ' + (config.auth.token || envToken) + 'aesmd5');
     github.authenticate({
         type: "token",
         token: config.auth.token || envToken,
