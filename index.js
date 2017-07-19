@@ -51,7 +51,7 @@ function getRepos(err, res){
 
                 console.log(req["data"].name);
                 fs.mkdirSync(gitDir);
-                git(gitDir, isDebug)(req["data"].html_url, req["data"].parent.html_url)
+                git(gitDir, isDebug)(req["data"].git_url, req["data"].parent.git_url)
                     //.then(delDir(gitDir));
 
             });
