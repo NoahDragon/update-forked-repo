@@ -24,7 +24,7 @@ The app could be configurable in `.config.yml`.
 
 ```yaml
 org: ForkedReposBak # Repos under an organization
-user: NoahDragon    # Repos under a user
+self_repo: true     # Get repos from github user account (only public visible repos)
 auth:
   token:            # Personalized token from Github 
 ```
@@ -32,7 +32,7 @@ auth:
 The configuration could also set into environment variables:
 
 `GITHUB_REPO_FROM_ORG` for the org.
-`GITHUB_REPO_FROM_USER` for the user.
+`GITHUB_SELF_REPO` for the repos in github account.
 `GITHUB_TOKEN` for the token.
 
 ## Caveats

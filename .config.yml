@@ -1,4 +1,4 @@
-org: ForkedReposBak # google
-user: 
+org: ForkedReposBak # get repos from org which the token have the permission to read/write.
+self_repo: true # get repos from own github account. 
 auth:
   token: 

@@ -11,7 +11,7 @@ var baseDir = __dirname;
 var config = yaml.safeLoad(fs.readFileSync(path.join(baseDir, '.config.yml'), 'utf-8'));
 var token = config.auth.token || process.env.GITHUB_TOKEN;
 var org = config.org || process.env.GITHUB_REPO_FROM_ORG;
-var user = config.user || process.env.GITHUB_REPO_FROM_USER;
+var selfRepo = config.self_repo || process.env.GITHUB_SELF_REPO
 
 var isDebug = false;
 
@@ -74,7 +74,7 @@ function getRepos(err, res){
                 git(gitDir, isDebug)(composeUrl(repo), composeUrl(repo.parent), repo.default_branch, repo.parent.default_branch)
                     .then(() => delDir(gitDir)) // be good, clean up left overs.
                     .then(() => console.log(gitDir + ' Done.'))
-                    .catch((err) => console.log(err.message));
+                    .catch((err) => console.log(err));
             });
         }, this);
     }
@@ -92,6 +92,6 @@ if (org){
     github.repos.getForOrg({org: org, per_page: 100, type: 'forks'}, getRepos);
 }
 
-if (user){
-    github.repos.getForUser({username: user, per_page: 100}, getRepos);
+if (selfRepo){
+    github.repos.getAll({visibility: "public", per_page: 100}, getRepos);
 }
