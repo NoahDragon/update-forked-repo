@@ -55,16 +55,20 @@ function getRepos(err, res){
         repoList.forEach(function(e, i) {
             github.repos.get({  owner: e.owner.login, 
                                 repo: e.name}, 
-            (err, req) => {
+            (err, res) => {
                 if (err) {
                     console.log(err);
                 }
                 
+                if (!res["data"].parent){   // Not a forked repo.
+                    return;
+                }
+
                 let gitDir = path.join(baseDir, i.toString());
 
-                console.log(req["data"].name, i.toString());
+                console.log(res["data"].name, i.toString());
                 fs.mkdirSync(gitDir);
-                git(gitDir, isDebug)(composeUrl(req["data"]), composeUrl(req["data"].parent))
+                git(gitDir, isDebug)(composeUrl(res["data"]), composeUrl(res["data"].parent))
                     .then(() => delDir(gitDir)) // be good, clean up left folders.
                     .then(() => console.log(gitDir + ' Done.'));
             });
