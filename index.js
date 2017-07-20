@@ -96,5 +96,5 @@ if (org){
 }
 
 if (selfRepo){
-    github.repos.getAll({visibility: "public", per_page: 100, type: "owner"}, getRepos);
+    github.repos.getAll({per_page: 100, type: "owner"}, getRepos);
 }
