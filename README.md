@@ -35,8 +35,13 @@ The configuration could also set into environment variables:
 `GITHUB_REPO_FROM_USER` for the user.
 `GITHUB_TOKEN` for the token.
 
-## Caveat
+## Caveats
 
 * The forked repos should never been edited or contained any conflict commit with the source repos.
 * Only support forked repos within Github.
 * Need personal Github token to push repos.
+* Should not contains private repos.
+
+## TODO
+
+* Filter out private repos as personal access token cannot use on them.
