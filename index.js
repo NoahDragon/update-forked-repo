@@ -40,7 +40,7 @@ function composeUrl(repo){
     return rUrl
 }
 
-function getRepos(err, res, inOwner){
+function getRepos(err, res){
     if (err) {
         console.log(err);
         return false;
@@ -49,11 +49,11 @@ function getRepos(err, res, inOwner){
     repoList = repoList.concat(res['data']);
 
     if (github.hasNextPage(res)){
-        github.getNextPage(res).then((err, res) => getRepos(err, res, inOwner));
+        github.getNextPage(res, getRepos);
     } else {
         console.log('Total repos: ' + repoList.length);
         repoList.forEach(function(e, i) {
-            github.repos.get({  owner: inOwner, 
+            github.repos.get({  owner: e.owner.login, 
                                 repo: e.name}, 
             (err, req) => {
                 if (err) {
@@ -81,11 +81,9 @@ if (token) {
 }
 
 if (org){
-    github.repos.getForOrg({org: org, per_page: 100, type: 'forks'})
-        .then((err, res) => getRepos(err, res, org));
+    github.repos.getForOrg({org: org, per_page: 100, type: 'forks'}, getRepos);
 }
 
 if (user){
-    github.repos.getForUser({username: user, per_page: 100, type: 'forks'})
-        .then((err, res) => getRepos(err, res, user));
+    github.repos.getForUser({username: user, per_page: 100}, getRepos);
 }
