@@ -58,6 +58,7 @@ function getRepos(err, res){
             (err, res) => {
                 if (err) {
                     console.log(err);
+                    return;
                 }
 
                 if (!res["data"].parent){   // Not a forked repo.
