@@ -9,7 +9,9 @@ const git = require('./lib/git');
 var repoList = [];
 var baseDir = __dirname;
 var config = yaml.safeLoad(fs.readFileSync(path.join(baseDir, '.config.yml'), 'utf-8'));
-var envToken = process.env.GITHUB_TOKEN
+var token = config.auth.token || process.env.GITHUB_TOKEN;
+var org = config.org || process.env.GITHUB_REPO_FROM_ORG;
+var user = config.user || process.env.GITHUB_REPO_FROM_USER;
 
 var isDebug = false;
 
@@ -30,8 +32,8 @@ var github = new githubApi({
 function composeUrl(repo){
     let rUrl = 'https://';
 
-    if (config.auth.token || envToken){
-        rUrl = rUrl + (config.auth.token || envToken) + '@';
+    if (token){
+        rUrl = rUrl + token + '@';
     }
 
     rUrl = rUrl + 'github.com/' + repo.full_name + '.git';
@@ -51,19 +53,24 @@ function getRepos(err, res){
     } else {
         console.log('Total repos: ' + repoList.length);
         repoList.forEach(function(e, i) {
-            github.repos.get({  owner: config.org, 
+            github.repos.get({  owner: e.owner.login, 
                                 repo: e.name}, 
-            (err, req) => {
+            (err, res) => {
                 if (err) {
                     console.log(err);
                 }
-                
-                let gitDir = path.join(baseDir, i.toString());
 
-                console.log(req["data"].name, i.toString());
+                if (!res["data"].parent){   // Not a forked repo.
+                    return;
+                }
+
+                let gitDir = path.join(baseDir, i.toString());
+                let repo = res["data"];
+
+                console.log(repo.name, i.toString());
                 fs.mkdirSync(gitDir);
                 git(gitDir, isDebug)(composeUrl(req["data"]), composeUrl(req["data"].parent))
-                    .then(() => delDir(gitDir))
+                    .then(() => delDir(gitDir)) // be good, clean up left overs.
                     .then(() => console.log(gitDir + ' Done.'))
                     .catch((err) => console.log(err));
             });
@@ -72,11 +79,17 @@ function getRepos(err, res){
 }
 
 // Autenticate.
-if (config.auth.token || envToken) {
+if (token) {
     github.authenticate({
         type: "token",
-        token: config.auth.token || envToken,
+        token: token,
     });
 }
 
-github.repos.getForOrg({org: config.org, per_page: 100, type: 'forks'}, getRepos);
+if (org){
+    github.repos.getForOrg({org: org, per_page: 100, type: 'forks'}, getRepos);
+}
+
+if (user){
+    github.repos.getForUser({username: user, per_page: 100}, getRepos);
+}
