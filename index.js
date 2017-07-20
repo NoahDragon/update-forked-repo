@@ -80,10 +80,12 @@ if (token) {
     });
 }
 
-if (config.org){
-    github.repos.getForOrg({org: org, per_page: 100, type: 'forks'}, getRepos(err, res, org));
+if (org){
+    github.repos.getForOrg({org: org, per_page: 100, type: 'forks'})
+        .then((err, res) => getRepos(err, res, org));
 }
 
-if (config.user){
-    github.repos.getForUser({username: user, per_page: 100, type: 'forks'}, getRepos(err, res, user));
+if (user){
+    github.repos.getForUser({username: user, per_page: 100, type: 'forks'})
+        .then((err, res) => getRepos(err, res, user));
 }
