@@ -14,6 +14,7 @@ var org = config.org || process.env.GITHUB_REPO_FROM_ORG;
 var selfRepo = config.self_repo || process.env.GITHUB_SELF_REPO
 
 var isDebug = false;
+var fileNum = 0;
 
 var github = new githubApi({
     // optional
@@ -61,15 +62,17 @@ function getRepos(err, res){
                     return;
                 }
 
-                if (!res["data"].parent){   // Not a forked repo.
-                    console.log(i.toString() + ' is not a forked repo.');
+                let fileName = (i+fileNum).toString();
+                let gitDir = path.join(baseDir, fileName);
+                let repo = res["data"];
+                fileNum = i;
+
+                if (!repo.parent){   // Not a forked repo.
+                    console.log(fileName + ' is not a forked repo.');
                     return;
                 }
 
-                let gitDir = path.join(baseDir, i.toString());
-                let repo = res["data"];
-
-                console.log(repo.name, i.toString());
+                console.log(repo.name, fileName);
                 fs.mkdirSync(gitDir);
                 git(gitDir, isDebug)(composeUrl(repo), composeUrl(repo.parent), repo.default_branch, repo.parent.default_branch)
                     .then(() => delDir(gitDir)) // be good, clean up left overs.
@@ -89,9 +92,9 @@ if (token) {
 }
 
 if (org){
-    github.repos.getForOrg({org: org, per_page: 100, type: 'forks'}, getRepos);
+    github.repos.getForOrg({org: org, per_page: 100, type: "forks"}, getRepos);
 }
 
 if (selfRepo){
-    github.repos.getAll({visibility: "public", per_page: 100}, getRepos);
+    github.repos.getAll({visibility: "public", per_page: 100, type: "owner"}, getRepos);
 }
