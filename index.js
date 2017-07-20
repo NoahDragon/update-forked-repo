@@ -49,7 +49,7 @@ function getRepos(err, res, inOwner){
     repoList = repoList.concat(res['data']);
 
     if (github.hasNextPage(res)){
-        github.getNextPage(res, getRepos);
+        github.getNextPage(res).then((err, res) => getRepos(err, res, inOwner));
     } else {
         console.log('Total repos: ' + repoList.length);
         repoList.forEach(function(e, i) {
