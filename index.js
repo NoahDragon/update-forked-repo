@@ -62,6 +62,7 @@ function getRepos(err, res){
                 }
 
                 if (!res["data"].parent){   // Not a forked repo.
+                    console.log(i.toString() + ' is not a forked repo.');
                     return;
                 }
 
@@ -73,7 +74,7 @@ function getRepos(err, res){
                 git(gitDir, isDebug)(composeUrl(repo), composeUrl(repo.parent), repo.default_branch, repo.parent.default_branch)
                     .then(() => delDir(gitDir)) // be good, clean up left overs.
                     .then(() => console.log(gitDir + ' Done.'))
-                    .catch((err) => console.log(err));
+                    .catch((err) => console.log(err.message));
             });
         }, this);
     }
