@@ -40,6 +40,3 @@ The configuration could also set into environment variables:
 * Need personal Github token to push repos.
 * Should not contains private repos.
 
-## TODO
-
-* Filter out private repos as personal access token cannot use on them.
