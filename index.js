@@ -11,7 +11,6 @@ var baseDir = __dirname;
 var config = yaml.safeLoad(fs.readFileSync(path.join(baseDir, '.config.yml'), 'utf-8'));
 var token = config.auth.token || process.env.GITHUB_TOKEN;
 var org = config.org || process.env.GITHUB_REPO_FROM_ORG;
-var selfRepo = config.self_repo || process.env.GITHUB_SELF_REPO
 
 var isDebug = false;
 var fileNum = 0;
@@ -54,6 +53,10 @@ function getRepos(err, res){
     } else {
         console.log('Total repos: ' + repoList.length);
         repoList.forEach(function(e, i) {
+            let fileName = (i+fileNum).toString();
+            let gitDir = path.join(baseDir, fileName);
+            fileNum = i;
+           
             setTimeout(function() { // Avoid trigger the github abuse detection mechanism.
                 github.repos.get({  owner: e.owner.login, 
                                     repo: e.name}, 
@@ -63,10 +66,7 @@ function getRepos(err, res){
                          return;
                     }
 
-                    let fileName = (i+fileNum).toString();
-                    let gitDir = path.join(baseDir, fileName);
                     let repo = res["data"];
-                    fileNum = i;
 
                     if (!repo.parent){   // Not a forked repo.
                         console.log(fileName + ' is not a forked repo.');
@@ -97,6 +97,4 @@ if (org){
     github.repos.getForOrg({org: org, per_page: 100, type: "forks"}, getRepos);
 }
 
-if (selfRepo){
-    github.repos.getAll({per_page: 100, type: "owner"}, getRepos);
-}
+
