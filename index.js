@@ -13,7 +13,6 @@ var token = config.auth.token || process.env.GITHUB_TOKEN;
 var org = config.org || process.env.GITHUB_REPO_FROM_ORG;
 
 var isDebug = false;
-var fileNum = 0;
 
 var github = new githubApi({
     // optional
@@ -53,9 +52,8 @@ function getRepos(err, res){
     } else {
         console.log('Total repos: ' + repoList.length);
         repoList.forEach(function(e, i) {
-            let fileName = (i+fileNum).toString();
+            let fileName = i.toString();
             let gitDir = path.join(baseDir, fileName);
-            fileNum = i;
            
             setTimeout(function() { // Avoid trigger the github abuse detection mechanism.
                 github.repos.get({  owner: e.owner.login, 
