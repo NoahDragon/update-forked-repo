@@ -54,31 +54,33 @@ function getRepos(err, res){
     } else {
         console.log('Total repos: ' + repoList.length);
         repoList.forEach(function(e, i) {
-            github.repos.get({  owner: e.owner.login, 
-                                repo: e.name}, 
-            (err, res) => {
-                if (err) {
-                    console.log(err);
-                    return;
-                }
+            setTimeout(function() { // Avoid trigger the github abuse detection mechanism.
+                github.repos.get({  owner: e.owner.login, 
+                                    repo: e.name}, 
+                (err, res) => {
+                    if (err) {
+                         console.log(err);
+                         return;
+                    }
 
-                let fileName = (i+fileNum).toString();
-                let gitDir = path.join(baseDir, fileName);
-                let repo = res["data"];
-                fileNum = i;
+                    let fileName = (i+fileNum).toString();
+                    let gitDir = path.join(baseDir, fileName);
+                    let repo = res["data"];
+                    fileNum = i;
 
-                if (!repo.parent){   // Not a forked repo.
-                    console.log(fileName + ' is not a forked repo.');
-                    return;
-                }
+                    if (!repo.parent){   // Not a forked repo.
+                        console.log(fileName + ' is not a forked repo.');
+                        return;
+                    }
 
-                console.log(repo.name, fileName);
-                fs.mkdirSync(gitDir);
-                git(gitDir, isDebug)(composeUrl(repo), composeUrl(repo.parent), repo.default_branch, repo.parent.default_branch)
-                    .then(() => delDir(gitDir)) // be good, clean up left overs.
-                    .then(() => console.log(gitDir + ' Done.'))
-                    .catch((err) => console.log(err));
-            });
+                    console.log(repo.name, fileName);
+                    fs.mkdirSync(gitDir);
+                    git(gitDir, isDebug)(composeUrl(repo), composeUrl(repo.parent), repo.default_branch, repo.parent.default_branch)
+                        .then(() => delDir(gitDir)) // be good, clean up left overs.
+                        .then(() => console.log(gitDir + ' Done.'))
+                        .catch((err) => console.log(err));
+                });
+             }, 500); 
         }, this);
     }
 }
