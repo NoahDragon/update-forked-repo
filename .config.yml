@@ -1,3 +1,3 @@
 org: ForkedReposBak # get repos from org which the token have the permission to read/write.
 auth:
-  token: fd5eb6c31935d36b2f8df8d2a086c8cdc49d1f20
+  token: 
