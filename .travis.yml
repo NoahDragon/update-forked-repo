@@ -8,7 +8,7 @@ cache:
     - node_modules
 
 node_js:
-  - "node"
+  - "8"
 
 before_script:
   - git config --global user.email "hi@abnerchou.me"
